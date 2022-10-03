@@ -14,13 +14,20 @@ int main()
 
     //Nebula Variable
     Texture2D nebula = LoadTexture("textures/12_nebula_spritesheet.png");
-    Rectangle nebRec{0.0,0.0, nebula.width/8, nebula.height/8};
-    Vector2 nebPos{windowWidth,windowHeight - nebRec.height};
+    Rectangle nebRec{0.0, 0.0, nebula.width/8, nebula.height/8};
+    Vector2 nebPos{windowWidth, windowHeight - nebRec.height};
+
+    Rectangle neb2Rec{0.0, 0.0, nebula.width/8, nebula.height/8};
+    Vector2 neb2Pos{windowWidth +300, windowHeight - nebRec.height};
 
     //Nebula Animation Variables
     int nebFrame{};
-    const float nebUpdateTime{1.0/12.0};
+    const float nebUpdateTime{1.0/12.0}; 
     float nebRunningTime{};
+
+    int neb2Frame{};
+    const float neb2UpdateTime{1.0/16.0}; 
+    float neb2RunningTime{};
 
     //nebula X Velocity (Pixels/seconds)
     int nebVel{-200};
@@ -81,6 +88,10 @@ int main()
         // update Nebula position
         nebPos.x += nebVel * dT;
 
+        // update 2ND Nebula position
+        neb2Pos.x += nebVel * dT;
+
+
         // update scarfy position
         scarfyPos.y += velocity * dT;
 
@@ -113,9 +124,24 @@ int main()
                 nebFrame = 0;
             }
         }
+        //update 2ND nebula animation frame
+        neb2RunningTime +=dT;
+        if(neb2RunningTime >= neb2UpdateTime)
+        {
+            neb2RunningTime = 0.0;
+            neb2Rec.x = neb2Frame * neb2Rec.width;
+            nebFrame++;
+            if(neb2Frame > 7)
+            {
+                neb2Frame = 0;
+            }
+        }
+
 
         //Draw Nebula
         DrawTextureRec(nebula, nebRec, nebPos, WHITE);
+        //Draw 2nd nebula
+         DrawTextureRec(nebula, neb2Rec, neb2Pos, RED);
         //Draw Scarfy
         DrawTextureRec(scarfy, scarfyRec, scarfyPos, WHITE);
 
