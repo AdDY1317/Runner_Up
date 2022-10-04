@@ -8,6 +8,31 @@ struct AnimData
     float updateTime;
     float runningTime;
 };
+
+bool isOnGround(AnimData data, int windowHeighht)
+{
+    return data.pos.y >= windowHeighht - data.rec.height;
+}
+
+//Anim data for sarfy
+ AnimData updateAnimData(AnimData data,float deltaTime, int maxFrame)
+ {
+    //update running time
+    data.runningTime +=deltaTime;
+    if(data.runningTime >= data.updateTime)
+    {
+        data.runningTime = 0.0;
+        //update animation frame
+        data.rec.x = data.frame * data.rec.width;
+        data.frame++;
+        if(data.frame > maxFrame)
+        {
+            data.frame = 0;
+        }
+    }
+    return data;
+ }
+
 int main()
 {
     // window Dimension using Array
@@ -21,7 +46,7 @@ int main()
     // acceleartion due to Gravity(pixels/s)/s
     const int gravity{1'000};
 
-    //-------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------
     // Nebula Variable
     Texture2D nebula = LoadTexture("textures/12_nebula_spritesheet.png");
 
@@ -45,7 +70,7 @@ int main()
     // nebula X Velocity (Pixels/seconds)
     int nebVel{-200};
 
-    //------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------
     // scarfy Vaiables
     Texture2D scarfy = LoadTexture("textures/scarfy.png");
     AnimData scarfyData;
@@ -58,7 +83,7 @@ int main()
     scarfyData.frame = 0;
     scarfyData.updateTime = 1.0 / 12.0;
     scarfyData.runningTime = 0.0;
-
+//-----------------------------------------------------------------------------------------------------------------------------
     // Is the Rectangle in Air
     bool IsinAir{};
     // JUMP VELOCITY pixels/sec
@@ -77,7 +102,7 @@ int main()
         BeginDrawing();
         ClearBackground(WHITE);
 
-        if (scarfyData.pos.y >= windowDimensions[1] - scarfyData.rec.height)
+        if (isOnGround(scarfyData, windowDimensions[1]))
         {
             velocity = 0;
             IsinAir = false;
@@ -94,10 +119,10 @@ int main()
             velocity += jumpVel;
         }
 
-        for(int i=0; i < sizeofNebulae; i++ )
+        for (int i = 0; i < sizeofNebulae; i++)
         {
             // update the position of each Nebula
-           nebulae[i].pos.x += nebVel * dT; 
+            nebulae[i].pos.x += nebVel * dT;
         }
 
         // update scarfy position
@@ -105,39 +130,17 @@ int main()
 
         // update scarfy's animation frame
         if (!IsinAir)
-        {
-            // update running time
-            scarfyData.runningTime += dT;
-            if (scarfyData.runningTime >= scarfyData.updateTime)
-            {
-                scarfyData.runningTime = 0.0;
-                // update Animation frame
-                scarfyData.rec.x = scarfyData.frame * scarfyData.rec.width;
-                scarfyData.frame++;
-                if (scarfyData.frame > 5)
-                {
-                    scarfyData.frame = 0;
-                }
-            }
+        { 
+            scarfyData = updateAnimData(scarfyData, dT, 5);
+           
         }
 
         for (int i = 0; i < sizeofNebulae; i++)
-        {
-            // update nebula animation frame
-            nebulae[i].runningTime += dT;
-            if (nebulae[i].runningTime >= nebulae[i].updateTime)
-            {
-                nebulae[i].runningTime = 0.0;
-                nebulae[i].rec.x = nebulae[i].frame * nebulae[i].rec.width;
-                nebulae[i].frame++;
-                if (nebulae[i].frame > 7)
-                {
-                    nebulae[i].frame = 0;
-                }
-            }
+        { 
+            nebulae[i] = updateAnimData(nebulae[i],dT, 7);
         }
-         
-        for(int i = 0; i < sizeofNebulae; i++)
+
+        for (int i = 0; i < sizeofNebulae; i++)
         {
             DrawTextureRec(nebula, nebulae[i].rec, nebulae[i].pos, WHITE);
         }
