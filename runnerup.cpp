@@ -49,7 +49,7 @@ int main()
     // Nebula Variable
     Texture2D nebula = LoadTexture("textures/12_nebula_spritesheet.png");
     // size of nebula
-    const int sizeofNebulae{3};
+    const int sizeofNebulae{10};
     // Array and Loop for Anim Data
     AnimData nebulae[sizeofNebulae]{};
     // for loop Nebula
